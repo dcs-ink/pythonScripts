@@ -1,23 +1,32 @@
 import subprocess
 import os
+from datetime import datetime  # Added to handle date for the filename
 
 def run_nmap_scan(ip_range):
     """Runs an nmap scan using subprocess and streams the output."""
     print(f"Running nmap scan on {ip_range}...\n")
     try:
+        # Define the specific ports to scan
+        ports = (
+            "21,22,23,25,53,80,110,143,161,162,443,"
+            "3306,3389,5900,6379,8080,8443,"
+            "445,139,135,5985,5986,1433,1521,2375,2376,9200"
+        )
         process = subprocess.Popen(
-            ['sudo', 'nmap', '-sS', '-T4', '--min-rate', '1000', '--max-retries', '1', '-p', '1-100', ip_range],
+            ['sudo', 'nmap', '-sS', '-T4', '--min-rate', '1000', '--max-retries', '1', '-p', ports, ip_range],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
         )
+        output = []  # Capture output here
         for line in process.stdout:
             print(line.strip())  # Print each line of output as it arrives
+            output.append(line.strip())  # Append to output list
         process.wait()
         if process.returncode != 0:
             print(f"Error running nmap: {process.stderr.read().strip()}")
             return None
-        return process.stdout.read()
+        return "\n".join(output)  # Return the captured output as a single string
     except FileNotFoundError:
         print("Error: nmap is not installed or not found in PATH.")
         return None
@@ -92,8 +101,29 @@ def display_report(report):
         print("=" * 50)
 
 
+def save_report_to_file(report):
+    """Saves the scan report to a text file in the home directory."""
+    date_str = datetime.now().strftime("%Y-%m-%d")  # Get current date
+    filename = os.path.expanduser(f"~/nmap_report_{date_str}.txt")  # File path in home directory
+    with open(filename, "w") as file:
+        file.write("Network Scan Report:\n")
+        file.write("=" * 50 + "\n")
+        for host in report:
+            file.write(f"IP Address: {host['IP']}\n")
+            file.write(f"Hostname: {host['Hostname']}\n")
+            file.write(f"State: {host['State']}\n")
+            if host['Open Ports']:
+                file.write("Open Ports:\n")
+                for port in host['Open Ports']:
+                    file.write(f"  - Port {port['Port']}: {port['State']} ({port['Service']})\n")
+            else:
+                file.write("No open ports found.\n")
+            file.write("=" * 50 + "\n")
+    print(f"Report saved to {filename}")
+
+
 if __name__ == "__main__":
-    target_range = input("Enter target IP range (e.g., 192.168.1.0/24): ")
+    target_range = input("Enter target IP range: ")
 
     # Check if the script is run with sudo
     if os.geteuid() != 0:
@@ -104,3 +134,6 @@ if __name__ == "__main__":
     raw_output = run_nmap_scan(target_range)
     if raw_output:
         print("\nScan completed successfully!")
+        parsed_report = parse_nmap_output(raw_output)
+        display_report(parsed_report)
+        save_report_to_file(parsed_report)  # Save the report to a file
