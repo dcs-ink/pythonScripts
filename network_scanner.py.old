@@ -1,5 +1,5 @@
 # # ========================================
-# # Old Code
+# # Old Code - This file isn't used. Keeping for historical context
 # # ========================================
 
 # # import subprocess
@@ -95,17 +95,17 @@
 # ..Later that evening
 # Restarting to Reinforce Past Lessons and Focus on Practical Applications
 
-import nmap
+# import nmap
 
-def scan_network(ip_range):
-    scanner = nmap.PortScanner()
-    print(f"Scanning network: {ip_range}...")
+# def scan_network(ip_range):
+#     scanner = nmap.PortScanner()
+#     print(f"Scanning network: {ip_range}...")
 
-    scanner.scan(hosts=ip_range, arguments='-Pn')
+#     scanner.scan(hosts=ip_range, arguments='-Pn')
 
-    for host in scanner.all_hosts():
-        print(f"Host: {host} is {scanner[host].state}")
+#     for host in scanner.all_hosts():
+#         print(f"Host: {host} is {scanner[host].state}")
 
-if __name__ == "__main__":
-    target_range = input("Enter target IP range: ")
-    scan_network(target_range)
+# if __name__ == "__main__":
+#     target_range = input("Enter target IP range: ")
+#     scan_network(target_range)
