@@ -111,21 +111,3 @@ The report is saved to the user's home directory with the filename format `nmap_
 
 ---
 
-## Troubleshooting
-
-1. **Permission Denied**:
-   - Ensure you run the script with `sudo`:
-     ```bash
-     sudo python3 network_scan_report.py
-     ```
-
-2. **Nmap Not Found**:
-   - Ensure `nmap` is installed and available in your system's PATH:
-     ```bash
-     sudo apt install nmap
-     ```
-
-3. **Script Hangs or Takes Too Long**:
-   - Reduce the IP range or the number of ports being scanned.
-   - Use faster `nmap` options like `-T4` and `--min-rate`.
-
