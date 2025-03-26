@@ -1,4 +1,4 @@
-### The files network_scanner.py and port_scanner.py are not used. They were used as testing scripts as I learned nmap. 
+### The files network_scanner.py and port_scanner.py are not used. They were used as testing scripts as I explored nmap. 
 
 
 # Network Scan Report Script
